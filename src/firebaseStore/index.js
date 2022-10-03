@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { app } from "../firebaseConfig"
-import { addDoc, collection, getFirestore } from 'firebase/firestore'
+import { addDoc, collection, doc, getFirestore, setDoc } from 'firebase/firestore'
 import { InputText } from "primereact/inputtext";
 import { async } from "@firebase/util";
 import { Button } from "primereact/button";
@@ -29,6 +29,29 @@ const Index = () => {
         }
     }
 
+    const saveDoc = async () => {
+        try {
+            const result = await setDoc(doc(db, "users", "user_id_1"), {
+                firstName: firstName,
+                lastName: lastName,
+            });
+
+            console.log("saveDoc result : " + result);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const saveDocParam = async () => {
+        try {
+            const user_1 = await doc(db, "users", "user_id_1");
+
+            setDoc(user_1, {address:address, city:city}, {merge : true})
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <div className="flex justify-content-center">
             <div className="p-fluid">
@@ -51,12 +74,13 @@ const Index = () => {
 
                 <div className="p-field">
                     <Button id="saveUser" label="Save" onClick={saveUser} />
+                    <Button id="saveDoc" label="Save With Id" onClick={saveDoc} />
+                    <Button id="updateDoc" label="Update Document" onClick={saveDocParam} />
                 </div>
             </div>
 
         </div>
     )
-
 };
 
 export default Index;
