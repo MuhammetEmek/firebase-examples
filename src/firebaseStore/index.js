@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { app } from "../firebaseConfig"
-import { getFirestore } from 'firebase/firestore'
+import { addDoc, collection, getFirestore } from 'firebase/firestore'
 import { InputText } from "primereact/inputtext";
+import { async } from "@firebase/util";
+import { Button } from "primereact/button";
 
 const Index = () => {
 
@@ -9,6 +11,23 @@ const Index = () => {
     const [lastName, setLastName] = useState("");
     const [address, setAddress] = useState("");
     const [city, setCity] = useState("");
+
+    const db = getFirestore(app);
+
+    const saveUser = async () => {
+        try {
+            const result = await addDoc(collection(db, "users"), {
+                firstName: firstName,
+                lastName: lastName,
+                address: address,
+                city: city
+            });
+
+            console.log("Document Id : " + result.id);
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div className="flex justify-content-center">
@@ -26,8 +45,12 @@ const Index = () => {
                     <InputText id="address" onChange={(e) => setAddress(e.target.value)} />
                 </div>
                 <div className="p-field">
-                    <label htmlFor='city'>Address</label>
+                    <label htmlFor='city'>City</label>
                     <InputText id="city" onChange={(e) => setCity(e.target.value)} />
+                </div>
+
+                <div className="p-field">
+                    <Button id="saveUser" label="Save" onClick={saveUser} />
                 </div>
             </div>
 
